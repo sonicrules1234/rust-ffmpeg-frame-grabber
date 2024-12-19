@@ -115,9 +115,6 @@ impl FFMpegVideo {
 pub struct Frame {
     /// The decoded image.
     pub image: FrameBuffer,
-
-    /// The offset of this frame in the video. Might not be the true time offset.
-    pub time_offset: Duration,
 }
 
 pub type FrameBuffer = ImageBuffer<Rgb<u8>, Vec<u8>>;
@@ -140,7 +137,7 @@ impl FFMpegVideo {
                 lines_to_read = lines_to_read - 1;
             }
         }
-        let time_seconds = f64::from_str(infos.get("pts_time").unwrap()).unwrap();
+        //let time_seconds = f64::from_str(infos.get("pts_time").unwrap()).unwrap();
 
         let i = &self.primary_video_stream_info;
         let mut buffer = vec![0u8; (i.width * i.height * 3) as usize];
@@ -162,7 +159,7 @@ impl FFMpegVideo {
 
         Ok(Some(Frame {
             image,
-            time_offset: Duration::from_secs_f64(time_seconds),
+            //time_offset: Duration::from_secs_f64(time_seconds),
         }))
     }
 }
@@ -180,6 +177,7 @@ impl Iterator for FFMpegVideo {
 }
 
 fn parse_showinfo(line: &str, props: &mut HashMap<String, String>) -> std::option::Option<()> {
+    //println!("{line}");
     if !line.starts_with(&"[Parsed_showinfo_") {
         return None;
     }
